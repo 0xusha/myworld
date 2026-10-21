@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>My World — Typography Globe</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #0b0f19; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+        canvas {
+            width: 100%;
+            max-width: min(800px, 95vh); 
+            aspect-ratio: 1 / 1;
+            background-color: #0b0f19;
+            touch-action: none;
+        }
+    </style>
+</head>
+<body>
+
+<canvas id="worldCanvas" width="800" height="800"></canvas>
+
+<script>
+    const canvas = document.getElementById('worldCanvas');
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width;
+    const H = canvas.height;
+
+    const phrases = [
+        "My World", "Mi Mundo", "Mon Monde", "Meine Welt", "Il Mio Mondo", "Meu Mundo", 
+        "నా ప్రపంచం", "मेरी दुनिया", "나의 세상", "私の世界", "我的世界", "Мой мир", 
+        "عالمي", "Mijn Wereld", "Min Värld", "Benim Dünyam", "Ο κόσμος μου", 
+        "Ulimwengu Wangu", "Aking Mundo", "Duniaku", "Thế giới của tôi", "Mój Świat", 
+        "Můj Svět", "Koko Maailmani", "Mitt Univers", "Min Verden", "Mon Univers", 
+        "Mi Universo", "En Prapancham", "Nanna Prapancha", "Maza Jag", "Amar Prithibi", 
+        "Mera Jahan", "Meri Kainaat", "Dunia Yangu", "Ku Munyika", "Akwa Uwa",
+        "Mina Maailm", "Mitt Hjärta", "Mon Tout", "Mi Vida", "Meu Tudo"
+    ];
+
+    let phraseBag = [...phrases];
+    for (let i = phraseBag.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [phraseBag[i], phraseBag[j]] = [phraseBag[j], phraseBag[i]];
+    }
+
+    function getBestFit(remaining) {
+        if (phraseBag.length === 0) {
+            phraseBag = [...phrases];
+            for (let i = phraseBag.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [phraseBag[i], phraseBag[j]] = [phraseBag[j], phraseBag[i]];
+            }
+        }
+        for (let i = phraseBag.length - 1; i >= 0; i--) {
+            let width = ctx.measureText(phraseBag[i]).width;
+            if (width <= remaining) {
+                return { text: phraseBag.splice(i, 1)[0], width: width };
+            }
+        }
+        return null; 
+    }
+
+    function defineOrganicHeart(context, cx, cy, scale) {
+        context.beginPath();
+        context.moveTo(cx - 10 * scale, cy - 140 * scale);
+        context.bezierCurveTo(cx - 160 * scale, cy - 350 * scale, cx - 440 * scale, cy - 130 * scale, cx - 350 * scale, cy + 90 * scale);
+        context.bezierCurveTo(cx - 300 * scale, cy + 260 * scale, cx - 80 * scale, cy + 390 * scale, cx - 20 * scale, cy + 425 * scale);
+        context.bezierCurveTo(cx + 40 * scale, cy + 380 * scale, cx + 330 * scale, cy + 240 * scale, cx + 350 * scale, cy + 80 * scale);
+        context.bezierCurveTo(cx + 410 * scale, cy - 130 * scale, cx + 220 * scale, cy - 340 * scale, cx - 10 * scale, cy - 140 * scale);
+        context.closePath();
+    }
+
+    const off = document.createElement('canvas');
+    off.width = W; off.height = H;
+    const offCtx = off.getContext('2d', { willReadFrequently: true });
+
+    const heartCX = 415;
+    const heartCY = 370;
+    const heartScale = 0.85;
+
+    // Changed from #1a1a1a (black) to #ffffff (white) so the border text is visible
+    defineOrganicHeart(offCtx, heartCX, heartCY, heartScale);
+    offCtx.fillStyle = "#ffffff"; 
+    offCtx.fill();
+
+    offCtx.save();
+    defineOrganicHeart(offCtx, heartCX, heartCY, heartScale * 0.94);
+    offCtx.clip();
+
+    offCtx.fillStyle = "#5974f4"; 
+    offCtx.fillRect(0, 0, W, H);
+
+    offCtx.fillStyle = "#7bd346"; 
+    
+    offCtx.save();
+    offCtx.translate(heartCX, heartCY);
+    offCtx.scale(heartScale, heartScale);
+
+    offCtx.beginPath();
+    offCtx.moveTo(-380, -50);
+    offCtx.bezierCurveTo(-340, -150, -320, -180, -260, -130);
+    offCtx.bezierCurveTo(-260, -50, -300, 30, -290, 100);
+    offCtx.bezierCurveTo(-320, 150, -380, 110, -380, -50);
+    offCtx.fill();
+
+    offCtx.beginPath();
+    offCtx.moveTo(20, -150);
+    offCtx.bezierCurveTo(80, -300, 220, -280, 240, -200);
+    offCtx.bezierCurveTo(100, -80, 140, 20, 80, -30);
+    offCtx.bezierCurveTo(20, -50, -10, -100, 20, -150);
+    offCtx.fill();
+
+    offCtx.beginPath();
+    offCtx.moveTo(-70, -20);
+    offCtx.bezierCurveTo(-20, -40, 100, -20, 80, 40);
+    offCtx.bezierCurveTo(60, 160, -60, 200, -30, 230);
+    offCtx.bezierCurveTo(-140, 200, -120, 60, -70, -20);
+    offCtx.fill();
+
+    offCtx.beginPath();
+    offCtx.arc(-100, 180, 26, 0, Math.PI * 2);
+    offCtx.fill();
+
+    offCtx.beginPath();
+    offCtx.arc(280, 50, 45, 0, Math.PI * 2);
+    offCtx.fill();
+
+    offCtx.restore(); 
+    offCtx.restore(); 
+
+    const imgData = offCtx.getImageData(0, 0, W, H).data;
+
+    const gap = 3; 
+    const FONT_SIZE = 10;
+    ctx.font = `bold ${FONT_SIZE}px "Comic Sans MS", "Chalkboard SE", sans-serif`;
+    
+    const rawParticles = [];
+    const MIN_GAP = 3; 
+
+    for (let y = 30; y < H - 30; y += FONT_SIZE * 0.95) {
+        let spans = [];
+        let inSpan = false;
+        let startX = 0;
+        
+        for (let x = 0; x < W; x++) {
+            let idx = (Math.floor(y) * W + x) * 4;
+            let alpha = imgData[idx + 3];
+            
+            if (alpha > 50) {
+                if (!inSpan) {
+                    inSpan = true;
+                    startX = x;
+                }
+            } else {
+                if (inSpan) {
+                    inSpan = false;
+                    spans.push({ lo: startX, hi: x });
+                }
+            }
+        }
+        if (inSpan) spans.push({ lo: startX, hi: W });
+
+        spans.forEach(span => {
+            let available = span.hi - span.lo;
+            if (available < 15) return; 
+
+            let line = [];
+            let remaining = available;
+            
+            while (remaining > 0) {
+                let candidate = getBestFit(remaining);
+                if (!candidate) break;
+                line.push(candidate);
+                remaining -= (candidate.width + MIN_GAP);
+            }
+
+            if (line.length === 0) return;
+
+            let totalWordWidth = line.reduce((sum, item) => sum + item.width, 0);
+            let slack = available - totalWordWidth;
+            
+            let currentX = span.lo;
+            let actualGap = 0;
+
+            if (line.length > 1 && slack < available * 0.5) {
+                actualGap = slack / (line.length - 1);
+            } else {
+                actualGap = MIN_GAP;
+                currentX = span.lo + (available - (totalWordWidth + (line.length - 1) * MIN_GAP)) / 2;
+            }
+
+            line.forEach((item) => {
+                let centerX = currentX + item.width / 2;
+                
+                let pxX = Math.min(W - 1, Math.max(0, Math.floor(centerX)));
+                let pxY = Math.min(H - 1, Math.max(0, Math.floor(y)));
+                let idx = (pxY * W + pxX) * 4;
+                
+                let r = imgData[idx];
+                let g = imgData[idx+1];
+                let b = imgData[idx+2];
+
+                // Direct rgb injection. The border is now white, making it pop against the midnight background.
+                let color = `rgb(${r}, ${g}, ${b})`;
+
+                rawParticles.push({
+                    text: item.text,
+                    x: centerX,
+                    y: y,
+                    baseColor: color
+                });
+                
+                currentX += item.width + actualGap;
+            });
+        });
+    }
+
+    rawParticles.forEach(p => {
+        p.frame = 0;
+        p.dy = -15; 
+        p.active = false;
+        p.settled = false;
+    });
+
+    rawParticles.sort(() => Math.random() - 0.5);
+
+    const ANIM_FRAMES = 35; 
+    let spawnIdx = 0;
+    let rate = rawParticles.length / (4.5 * 60); 
+    let acc = 0; 
+
+    function draw() {
+        ctx.clearRect(0, 0, W, H);
+        
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.font = `bold ${FONT_SIZE}px "Comic Sans MS", "Chalkboard SE", sans-serif`;
+        
+        acc += rate;
+        while (acc >= 1 && spawnIdx < rawParticles.length) {
+            rawParticles[spawnIdx].active = true;
+            spawnIdx++;
+            acc -= 1;
+        }
+
+        for (let i = 0; i < rawParticles.length; i++) {
+            let p = rawParticles[i];
+            if (!p.active) continue;
+
+            if (!p.settled) {
+                p.frame++;
+                let u = Math.min(1.0, p.frame / ANIM_FRAMES);
+                let eased = 1 - Math.pow(1 - u, 3); 
+                
+                let currentX = p.x;
+                let currentY = p.y + p.dy * (1 - eased);
+
+                ctx.globalAlpha = eased;
+                ctx.fillStyle = p.baseColor;
+                ctx.fillText(p.text, currentX, currentY);
+
+                if (u >= 1) p.settled = true;
+            } else {
+                ctx.globalAlpha = 1.0;
+                ctx.fillStyle = p.baseColor;
+                ctx.fillText(p.text, p.x, p.y);
+            }
+        }
+
+        requestAnimationFrame(draw);
+    }
+
+    draw();
+</script>
+</body>
+</html>
